@@ -58,7 +58,7 @@ def lint(session):
 
 @nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
-    session.install(".[develop]")
+    session.install(".[develop]", silent=False)
     session.run(
         "pytest",
         "--cov=elastic_transport",
