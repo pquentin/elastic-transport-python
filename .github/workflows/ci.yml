@@ -14,9 +14,9 @@ jobs:
         with:
           python-version: 3.x
       - name: Install dependencies
-        run: python3 -m pip install setuptools wheel twine
-      - name: Build dists
-        run: python3 utils/build-dists.py
+        run: python3 -m pip install nox
+      - name: Check package
+        run: nox -s check_package
 
   lint:
     runs-on: ubuntu-latest

@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import pathlib
+import tempfile
+
 import nox
 
 SOURCE_FILES = (
@@ -25,6 +28,36 @@ SOURCE_FILES = (
     "tests/",
     "docs/sphinx/",
 )
+
+
+@nox.session
+def check_package(session):
+    session.install("build", "pip", "twine")
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        session.run("python", "-m", "build", "--outdir", tmp_dir)
+        session.chdir(tmp_dir)
+
+        for dist in pathlib.Path(tmp_dir).iterdir():
+            print("dist", dist)
+            session.run("twine", "check", dist)
+
+            # Test out importing from the package
+            session.run("pip", "install", dist)
+            session.run(
+                "python",
+                "-c",
+                "from elastic_transport import Transport, Urllib3HttpNode, RequestsHttpNode",
+            )
+
+            # Uninstall the dist, see that we can't import things anymore
+            session.run("pip", "uninstall", "--yes", "elastic-transport")
+            session.run(
+                "python",
+                "-c",
+                "from elastic_transport import Transport",
+                success_codes=[1],
+                silent=True,
+            )
 
 
 @nox.session()
