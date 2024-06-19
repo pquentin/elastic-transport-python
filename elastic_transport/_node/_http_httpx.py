@@ -169,7 +169,7 @@ class HttpxAsyncHttpNode(BaseAsyncNode):
                 body=body,
                 exception=err,
             )
-            raise err from None
+            raise err from e
 
         meta = ApiResponseMeta(
             resp.status_code,
