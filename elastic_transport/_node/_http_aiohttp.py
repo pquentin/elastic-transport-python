@@ -249,6 +249,7 @@ class AiohttpHttpNode(BaseAsyncNode):
         """
         if self._loop is None:
             self._loop = asyncio.get_running_loop()
+        print("new session, limit per host", self._connections_per_node)
         self.session = aiohttp.ClientSession(
             headers=self.headers,
             skip_auto_headers=("accept", "accept-encoding", "user-agent"),
