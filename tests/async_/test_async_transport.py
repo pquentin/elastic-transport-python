@@ -139,12 +139,41 @@ async def test_request_will_fail_after_x_retries():
             )
         ],
         node_class=AsyncDummyNode,
+        max_retries=0,
+    )
+
+    with pytest.raises(ConnectionError) as e:
+        await t.perform_request("GET", "/")
+
+    assert 1 == len(t.node_pool.get().calls)
+    assert len(e.value.errors) == 1
+
+    # max_retries=3
+    t = AsyncTransport(
+        [
+            NodeConfig(
+                "http",
+                "localhost",
+                80,
+                _extras={"exception": ConnectionError("abandon ship")},
+            )
+        ],
+        node_class=AsyncDummyNode,
+        max_retries=3,
     )
 
     with pytest.raises(ConnectionError) as e:
         await t.perform_request("GET", "/")
 
     assert 4 == len(t.node_pool.get().calls)
+    assert len(e.value.errors) == 4
+    assert all(isinstance(error, ConnectionError) for error in e.value.errors)
+
+    # max_retries=2 in perform_request()
+    with pytest.raises(ConnectionError) as e:
+        await t.perform_request("GET", "/", max_retries=2)
+
+    assert 7 == len(t.node_pool.get().calls)
     assert len(e.value.errors) == 3
     assert all(isinstance(error, ConnectionError) for error in e.value.errors)
 

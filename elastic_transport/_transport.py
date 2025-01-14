@@ -401,6 +401,8 @@ class Transport:
                             # exception not to interrupt the retries.
                             pass
 
+                errors.append(e)
+
                 if not retry or attempt >= max_retries:
                     # Since we're exhausted but we have previously
                     # received some sort of response from the API
@@ -418,7 +420,6 @@ class Transport:
                         max_retries,
                         exc_info=e,
                     )
-                    errors.append(e)
 
             else:
                 # If we got back a response we need to check if that status

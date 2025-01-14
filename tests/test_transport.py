@@ -139,7 +139,7 @@ def test_request_will_fail_after_x_retries():
         t.perform_request("GET", "/")
 
     assert 1 == len(t.node_pool.get().calls)
-    assert len(e.value.errors) == 0
+    assert len(e.value.errors) == 1
 
     # max_retries=3
     t = Transport(
@@ -159,7 +159,7 @@ def test_request_will_fail_after_x_retries():
         t.perform_request("GET", "/")
 
     assert 4 == len(t.node_pool.get().calls)
-    assert len(e.value.errors) == 3
+    assert len(e.value.errors) == 4
     assert all(isinstance(error, ConnectionError) for error in e.value.errors)
 
     # max_retries=2 in perform_request()
@@ -167,7 +167,7 @@ def test_request_will_fail_after_x_retries():
         t.perform_request("GET", "/", max_retries=2)
 
     assert 7 == len(t.node_pool.get().calls)
-    assert len(e.value.errors) == 2
+    assert len(e.value.errors) == 3
     assert all(isinstance(error, ConnectionError) for error in e.value.errors)
 
 
