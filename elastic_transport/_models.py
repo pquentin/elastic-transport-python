@@ -238,7 +238,7 @@ class NodeConfig:
     connections_per_node: int = 10
 
     #: Number of seconds to wait before a request should timeout.
-    request_timeout: Optional[float] = 10.0
+    request_timeout: Optional[float] = 60.0
 
     #: Set to ``True`` to enable HTTP compression
     #: of request and response bodies via gzip.
